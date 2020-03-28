@@ -2,7 +2,7 @@ GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
 
 clean:
-	rm -rf ./bin/*
+	rm -rf ./build
 
 build: clean
-	go build -ldflags="-s -w" -o ./bin/aws-cli-$(GOOS)-$(GOARCH)
+	go build -ldflags="-s -w" -o ./build/aws-cli-$(GOOS)-$(GOARCH)
