@@ -10,11 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootOptions *settings.Options
-
 var rootCmd *cobra.Command
-
-var awsConfig aws.Config
 
 func Execute() {
 	command := MakeCommands()
@@ -25,7 +21,7 @@ func Execute() {
 
 func MakeCommands() *cobra.Command {
 	// root options
-	rootOptions = &settings.Options{}
+	rootOptions := &settings.Options{}
 
 	// root command
 	rootCmd = &cobra.Command{
@@ -41,8 +37,10 @@ func MakeCommands() *cobra.Command {
 		},
 	}
 
-	rootCmd.AddCommand(acmCmd())
-	rootCmd.AddCommand(stsCmd())
+	// commands
+	rootCmd.AddCommand(configureCmd(rootOptions))
+	rootCmd.AddCommand(acmCmd(rootOptions))
+	rootCmd.AddCommand(stsCmd(rootOptions))
 	rootCmd.AddCommand(versionCmd())
 
 	// root flags
@@ -52,30 +50,28 @@ func MakeCommands() *cobra.Command {
 	return rootCmd
 }
 
-func init() {
-	cobra.OnInitialize(func() {
-		cfg, err := external.LoadDefaultAWSConfig(external.WithSharedConfigProfile(rootOptions.Profile))
-		if err != nil {
-			panic("failed to load config, " + err.Error())
-		}
+func MakeAwsConfig(options *settings.Options) aws.Config {
+	cfg, err := external.LoadDefaultAWSConfig(external.WithSharedConfigProfile(options.Profile))
+	if err != nil {
+		panic("Failed to load config: " + err.Error())
+	}
 
-		if rootOptions.Region == "" {
-			rootOptions.Region = cfg.Region
-		}
+	if options.Region == "" {
+		options.Region = cfg.Region
+	}
 
-		awsConfig = aws.Config{
-			Region:                         rootOptions.Region,
-			Credentials:                    cfg.Credentials,
-			EndpointResolver:               cfg.EndpointResolver,
-			HTTPClient:                     cfg.HTTPClient,
-			Handlers:                       cfg.Handlers,
-			Retryer:                        cfg.Retryer,
-			LogLevel:                       cfg.LogLevel,
-			Logger:                         cfg.Logger,
-			DisableRestProtocolURICleaning: cfg.DisableRestProtocolURICleaning,
-			DisableEndpointHostPrefix:      cfg.DisableEndpointHostPrefix,
-			EnableEndpointDiscovery:        cfg.EnableEndpointDiscovery,
-			ConfigSources:                  cfg.ConfigSources,
-		}
-	})
+	return aws.Config{
+		Region:                         options.Region,
+		Credentials:                    cfg.Credentials,
+		EndpointResolver:               cfg.EndpointResolver,
+		HTTPClient:                     cfg.HTTPClient,
+		Handlers:                       cfg.Handlers,
+		Retryer:                        cfg.Retryer,
+		LogLevel:                       cfg.LogLevel,
+		Logger:                         cfg.Logger,
+		DisableRestProtocolURICleaning: cfg.DisableRestProtocolURICleaning,
+		DisableEndpointHostPrefix:      cfg.DisableEndpointHostPrefix,
+		EnableEndpointDiscovery:        cfg.EnableEndpointDiscovery,
+		ConfigSources:                  cfg.ConfigSources,
+	}
 }

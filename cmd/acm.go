@@ -5,42 +5,43 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/applicreation/aws-cli/settings"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	"github.com/spf13/cobra"
 )
 
-func acmCmd() *cobra.Command {
+func acmCmd(options *settings.Options) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "acm",
 		Short: "AWS Certificate Manager",
 	}
 
 	// add-tags-to-certificate
-	cmd.AddCommand(acmDeleteCertificateCmd())
-	cmd.AddCommand(acmDescribeCertificateCmd())
+	cmd.AddCommand(acmDeleteCertificateCmd(options))
+	cmd.AddCommand(acmDescribeCertificateCmd(options))
 	// export-certificate
-	cmd.AddCommand(acmGetCertificateCmd())
+	cmd.AddCommand(acmGetCertificateCmd(options))
 	// import-certificate
-	cmd.AddCommand(acmListCertificateCmd())
-	cmd.AddCommand(acmListTagsForCertificateCmd())
+	cmd.AddCommand(acmListCertificateCmd(options))
+	cmd.AddCommand(acmListTagsForCertificateCmd(options))
 	// remove-tags-from-certificate
-	cmd.AddCommand(acmRenewCertificateCmd())
-	cmd.AddCommand(acmRequestCertificateCmd())
-	cmd.AddCommand(acmResendValidationEmailCertificateCmd())
+	cmd.AddCommand(acmRenewCertificateCmd(options))
+	cmd.AddCommand(acmRequestCertificateCmd(options))
+	cmd.AddCommand(acmResendValidationEmailCertificateCmd(options))
 	// update-certificate-options
 	// wait
 
 	return cmd
 }
 
-func acmDeleteCertificateCmd() *cobra.Command {
+func acmDeleteCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 
 	cmd := &cobra.Command{
 		Use: "delete-certificate",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.DeleteCertificateInput{
 				CertificateArn: aws.String(CertificateArn),
@@ -65,13 +66,13 @@ func acmDeleteCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmDescribeCertificateCmd() *cobra.Command {
+func acmDescribeCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 
 	cmd := &cobra.Command{
 		Use: "describe-certificate",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.DescribeCertificateInput{
 				CertificateArn: aws.String(CertificateArn),
@@ -96,13 +97,13 @@ func acmDescribeCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmGetCertificateCmd() *cobra.Command {
+func acmGetCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 
 	cmd := &cobra.Command{
 		Use: "get-certificate",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.GetCertificateInput{
 				CertificateArn: aws.String(CertificateArn),
@@ -127,11 +128,11 @@ func acmGetCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmListCertificateCmd() *cobra.Command {
+func acmListCertificateCmd(options *settings.Options) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list-certificates",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.ListCertificatesInput{}
 
@@ -150,13 +151,13 @@ func acmListCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmListTagsForCertificateCmd() *cobra.Command {
+func acmListTagsForCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 
 	cmd := &cobra.Command{
 		Use: "list-tags-for-certificates",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.ListTagsForCertificateInput{
 				CertificateArn: aws.String(CertificateArn),
@@ -181,13 +182,13 @@ func acmListTagsForCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmRenewCertificateCmd() *cobra.Command {
+func acmRenewCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 
 	cmd := &cobra.Command{
 		Use: "renew-certificates",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.RenewCertificateInput{
 				CertificateArn: aws.String(CertificateArn),
@@ -212,13 +213,13 @@ func acmRenewCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmRequestCertificateCmd() *cobra.Command {
+func acmRequestCertificateCmd(options *settings.Options) *cobra.Command {
 	var DomainName string
 
 	cmd := &cobra.Command{
 		Use: "request-certificates",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.RequestCertificateInput{
 				DomainName: aws.String(DomainName),
@@ -243,7 +244,7 @@ func acmRequestCertificateCmd() *cobra.Command {
 	return cmd
 }
 
-func acmResendValidationEmailCertificateCmd() *cobra.Command {
+func acmResendValidationEmailCertificateCmd(options *settings.Options) *cobra.Command {
 	var CertificateArn string
 	var Domain string
 	var ValidationDomain string
@@ -251,7 +252,7 @@ func acmResendValidationEmailCertificateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "resend-validation-email-certificates",
 		Run: func(cmd *cobra.Command, args []string) {
-			svc := acm.New(awsConfig)
+			svc := acm.New(MakeAwsConfig(options))
 
 			input := &acm.ResendValidationEmailInput{
 				CertificateArn:   aws.String(CertificateArn),
