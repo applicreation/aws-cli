@@ -18,6 +18,13 @@ func stsCmd(options *settings.Options) *cobra.Command {
 	}
 
 	cmd.AddCommand(stsAssumeRoleCmd(options))
+	// assume-role-with-saml
+	// assume-role-with-web-identity
+	// decode-authorization-message
+	// get-access-key-info
+	// get-caller-identity
+	// get-federation-token
+	// get-session-token
 
 	return cmd
 }

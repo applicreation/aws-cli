@@ -40,6 +40,7 @@ func MakeCommands() *cobra.Command {
 	// commands
 	rootCmd.AddCommand(configureCmd(rootOptions))
 	rootCmd.AddCommand(acmCmd(rootOptions))
+	rootCmd.AddCommand(ecrCmd(rootOptions))
 	rootCmd.AddCommand(stsCmd(rootOptions))
 	rootCmd.AddCommand(versionCmd())
 
