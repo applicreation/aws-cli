@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/applicreation/aws-cli/settings"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/applicreation/aws-cli/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +41,7 @@ func MakeCommands() *cobra.Command {
 	rootCmd.AddCommand(configureCmd(rootOptions))
 	rootCmd.AddCommand(acmCmd(rootOptions))
 	rootCmd.AddCommand(ecrCmd(rootOptions))
+	rootCmd.AddCommand(ecsCmd(rootOptions))
 	rootCmd.AddCommand(stsCmd(rootOptions))
 	rootCmd.AddCommand(versionCmd())
 
