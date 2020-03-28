@@ -11,7 +11,7 @@ func versionCmd() *cobra.Command {
 		Use:   "version",
 		Short: "Current version of aws-cli",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("aws-cli/0.2.0")
+			fmt.Println("aws-cli/0.3.0")
 		},
 	}
 
